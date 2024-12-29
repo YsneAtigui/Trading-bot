@@ -1,0 +1,5 @@
+numpy
+pandas
+alpaca_trade_api
+alpaca-py
+datatime
