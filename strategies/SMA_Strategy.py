@@ -1,4 +1,4 @@
-from Strategies import Strategies
+from strategies.Strategies import Strategies
 from datetime import datetime, timedelta
 import math
 import time

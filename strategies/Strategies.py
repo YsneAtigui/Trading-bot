@@ -39,7 +39,8 @@ class Strategies :
         bars = self.api.get_bars(symbol = symbol,
                                  timeframe= timeframe,
                                  start= start_date,
-                                 end= end_date)
+                                 end= end_date,
+                                 feed="iex")
 
         return bars.df
     
