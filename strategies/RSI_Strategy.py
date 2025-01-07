@@ -2,7 +2,21 @@ from strategies.Strategies import Strategies
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 
+
 class RSI_Strategy(Strategies):
+    """
+    Implements an RSI-based trading strategy with additional MACD confirmation.
+
+    Attributes:
+        RSI_OVERSOLD (int): RSI value indicating oversold conditions (default: 40).
+        RSI_OVERBOUGHT (int): RSI value indicating overbought conditions (default: 70).
+        MACD_BUY_SIGNAL (bool): Condition for MACD buy signal.
+        MACD_SELL_SIGNAL (bool): Condition for MACD sell signal.
+        RISK_PERCENTAGE (float): Percentage of account balance to risk per trade.
+        STOP_LOSS_PERCENTAGE (float): Stop loss percentage.
+        TAKE_PROFIT_PERCENTAGE (float): Take profit percentage.
+    """
+    
     # Thresholds for RSI and MACD
     RSI_OVERSOLD = 40
     RSI_OVERBOUGHT = 70
@@ -19,6 +33,17 @@ class RSI_Strategy(Strategies):
 
     # Function to calculate Relative Strength Index (RSI)
     def rsi(self,data, period=14):
+        """
+        Calculates the Relative Strength Index (RSI).
+
+        Args:
+            data (pandas.Series): Series of closing prices.
+            period (int): Lookback period for RSI calculation.
+
+        Returns:
+            pandas.Series: RSI values.
+        """
+
         delta = data.diff().dropna()
         gain = delta.where(delta > 0, 0)
         loss = -delta.where(delta < 0, 0)
@@ -29,6 +54,19 @@ class RSI_Strategy(Strategies):
 
 # Function to calculate MACD and Signal line
     def macd(self,data, short_period=12, long_period=26, signal_period=9):
+        """
+        Calculates the MACD line and Signal line.
+
+        Args:
+            data (pandas.DataFrame): DataFrame containing 'close' prices.
+            short_period (int): Short EMA period.
+            long_period (int): Long EMA period.
+            signal_period (int): Signal line period.
+
+        Returns:
+            tuple: MACD line and Signal line.
+        """
+
         short_ema = data['close'].ewm(span=short_period, adjust=False).mean()
         long_ema = data['close'].ewm(span=long_period, adjust=False).mean()
         macd_line = short_ema - long_ema
@@ -37,6 +75,17 @@ class RSI_Strategy(Strategies):
 
 # Function to calculate position size based on account balance and risk tolerance
     def calculate_position_size(self,symbol, risk_percentage, stop_loss_percentage):
+        """
+        Calculates the position size based on risk tolerance.
+
+        Args:
+            symbol (str): Symbol of the stock/asset.
+            risk_percentage (float): Percentage of account balance to risk.
+            stop_loss_percentage (float): Stop loss percentage.
+
+        Returns:
+            int: Position size (number of shares).
+        """
         account_balance = float(self.api.get_account().cash)  # Get available cash balance
         current_price = self.api.get_latest_trade(symbol).p
         risk_amount = account_balance * risk_percentage  # Amount to risk
@@ -53,6 +102,14 @@ class RSI_Strategy(Strategies):
     
     # Function to plot stock data (closing price and RSI)
     def plot_data(self,data, symbol, lookback_days=90):
+        """
+        Plots closing price, RSI, and MACD for visualization.
+
+        Args:
+            data (pandas.DataFrame): DataFrame with historical stock data.
+            symbol (str): Symbol of the stock/asset.
+            lookback_days (int): Number of days to visualize.
+        """
         try:
             plt.figure(figsize=(14, 7))
 
@@ -121,6 +178,13 @@ class RSI_Strategy(Strategies):
 
 
     def trade(self,symbol,qty):
+        """
+        Executes trades based on RSI and MACD strategy.
+
+        Args:
+            symbol (str): Stock/asset symbol.
+            qty (int): Quantity to trade.
+        """
         # Fetch historical data for the stock symbol
         start_date, end_date = self.get_date_range(lookback_days=730)  # Adjust the lookback period as needed
         data = self.get_stock_data(symbol,"Day",start_date, end_date)
