@@ -175,8 +175,6 @@ class RSI_Strategy(Strategies):
         else:
             print(f"Holding {symbol}: No trading conditions met. (RSI: {current_rsi}, MACD: {current_macd})")
 
-
-
     def trade(self,symbol,qty):
         """
         Executes trades based on RSI and MACD strategy.

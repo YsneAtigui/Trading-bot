@@ -3,6 +3,11 @@ from colorama import init, Fore, Style
 from strategies.SMA_Strategy import SMA_Strategy
 from strategies.RSI_Strategy import RSI_Strategy
 
+from dotenv import load_dotenv
+
+from utils import write_to_env
+load_dotenv(dotenv_path=".env")
+
 # Initialize colorama
 init()
 
@@ -46,11 +51,22 @@ def get_user_input(prompt, input_type=str):
 def execute_sma_strategy():
     """Executes the SMA strategy."""
     print(Fore.CYAN + "\n--- SMA Strategy Selected ---" + Style.RESET_ALL)
-    api_key = input("Enter API Key: ")
-    secret_key = input("Enter Secret Key: ")
+
+    api_key = os.getenv("API_KEY")
+    if not api_key or api_key.strip() == "":
+        api_key = input("Enter API Key: ")
+        write_to_env(".env", "API_KEY", api_key)
+
+    secret_key = os.getenv("SECRET_KEY")
+    if not secret_key or secret_key.strip() == "":
+        secret_key = input("Enter Secret Key: ")
+        write_to_env(".env", "SECRET_KEY", secret_key)
+    
     sma_fast = get_user_input("Enter SMA Fast Period (integer): ", int)
     sma_slow = get_user_input("Enter SMA Slow Period (integer): ", int)
+    
     symbol = input("Enter Symbol (e.g., BTC/USD): ")
+    
     qty_per_trade = get_user_input("Enter Quantity per Trade (float): ", float)
 
     if sma_fast >= sma_slow:
@@ -69,8 +85,17 @@ def execute_sma_strategy():
 def execute_rsi_strategy():
     """Executes the RSI strategy."""
     print(Fore.CYAN + "\n--- RSI Strategy Selected ---" + Style.RESET_ALL)
-    api_key = input("Enter API Key: ")
-    secret_key = input("Enter Secret Key: ")
+    
+    api_key = os.getenv("API_KEY")
+    if not api_key or api_key.strip() == "":
+        api_key = input("Enter API Key: ")
+        write_to_env(".env", "API_KEY", api_key)
+
+    secret_key = os.getenv("SECRET_KEY")
+    if not secret_key or secret_key.strip() == "":
+        secret_key = input("Enter Secret Key: ")
+        write_to_env(".env", "SECRET_KEY", secret_key)
+
     symbol = input("Enter Symbol (e.g., AAPL): ")
     qty = get_user_input("Enter Quantity per Trade (float): ", float)
 
