@@ -21,7 +21,7 @@ def write_to_env(file_path: str, key: str, value: str):
 
     # Add the key if it does not exist
     if not updated:
-        lines.append(f'{key}="{value}\n"')
+        lines.append(f'{key}="{value}"\n')
 
     # Write back to the .env file
     with open(file_path, "w") as file:
