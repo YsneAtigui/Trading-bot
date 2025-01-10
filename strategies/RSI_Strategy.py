@@ -52,7 +52,7 @@ class RSI_Strategy(Strategies):
         rs = avg_gain / avg_loss
         return 100 - (100 / (1 + rs))
 
-# Function to calculate MACD and Signal line
+    # Function to calculate MACD and Signal line
     def macd(self,data, short_period=12, long_period=26, signal_period=9):
         """
         Calculates the MACD line and Signal line.
@@ -73,7 +73,7 @@ class RSI_Strategy(Strategies):
         signal_line = macd_line.ewm(span=signal_period, adjust=False).mean()
         return macd_line, signal_line
 
-# Function to calculate position size based on account balance and risk tolerance
+    # Function to calculate position size based on account balance and risk tolerance
     def calculate_position_size(self,symbol, risk_percentage, stop_loss_percentage):
         """
         Calculates the position size based on risk tolerance.

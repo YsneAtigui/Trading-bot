@@ -15,13 +15,13 @@ def write_to_env(file_path: str, key: str, value: str):
     # Update the key if it exists
     for i, line in enumerate(lines):
         if line.startswith(f"{key}="):
-            lines[i] = f"{key}={value}\n"
+            lines[i] = f'{key}="{value}"\n'
             updated = True
             break
 
     # Add the key if it does not exist
     if not updated:
-        lines.append(f"{key}={value}\n")
+        lines.append(f'{key}="{value}\n"')
 
     # Write back to the .env file
     with open(file_path, "w") as file:
