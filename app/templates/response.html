@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block response %}
+<!-- Response Data Table -->
+<div x-show="responseData">
+    <h2 class="text-2xl font-bold mb-4">Response Data</h2>
+    <table class="min-w-full bg-white rounded-lg shadow-md">
+        <thead>
+            <tr class="bg-gray-200">
+                <th class="px-4 py-2">Field</th>
+                <th class="px-4 py-2">Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="px-4 py-2 font-semibold">Strategy Type</td>
+                <td class="px-4 py-2" x-text="responseData.strategy_type"></td>
+            </tr>
+            <tr>
+                <td class="px-4 py-2 font-semibold">Symbol</td>
+                <td class="px-4 py-2" x-text="responseData.symbol"></td>
+            </tr>
+            <tr>
+                <td class="px-4 py-2 font-semibold">Quantity</td>
+                <td class="px-4 py-2" x-text="responseData.qty"></td>
+            </tr>
+            <tr>
+                <td class="px-4 py-2 font-semibold">SMA Fast Period</td>
+                <td class="px-4 py-2" x-text="responseData.sma_fast"></td>
+            </tr>
+            <tr>
+                <td class="px-4 py-2 font-semibold">SMA Slow Period</td>
+                <td class="px-4 py-2" x-text="responseData.sma_slow"></td>
+            </tr>
+            <tr>
+                <td class="px-4 py-2 font-semibold">API Key</td>
+                <td class="px-4 py-2" x-text="responseData.api_key"></td>
+            </tr>
+            <tr>
+                <td class="px-4 py-2 font-semibold">Secret Key</td>
+                <td class="px-4 py-2" x-text="responseData.secret_key"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock response %}

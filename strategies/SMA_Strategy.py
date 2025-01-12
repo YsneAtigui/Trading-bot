@@ -37,7 +37,7 @@ class SMA_Strategy(Strategies):
             int: Number of seconds to pause.
         """
         now = datetime.now()
-        next_min = now.replace(second=0, microsecond=0) + timedelta(minutes=1)
+        next_min = now.replace(second=0, microsecond=0) + timedelta(seconds=5)
         pause = math.ceil((next_min - now).seconds)
         print(f"Sleeping for {pause} seconds...")
         return pause
@@ -138,3 +138,41 @@ class SMA_Strategy(Strategies):
                 print("*" * 20)
         except Exception as e:
             print(f"An error occurred during strategy execution: {e}")
+
+
+    def api_crypto_SMA(self, SYMBOL, QTY_PER_TRADE, socketio):
+            """
+            Run the SMA strategy for cryptocurrency trading.
+
+            Args:
+                SYMBOL (str): The cryptocurrency symbol (e.g., 'BTC/USD').
+                QTY_PER_TRADE (float): The quantity to trade.
+            """
+            try:
+                while True:
+                    # Fetch data and calculate SMAs
+                    bars = self.get_crypto_SMA_bars(symbol=SYMBOL)
+
+                    # Check positions
+                    position = super().get_position(symbol=SYMBOL)
+                    should_buy = self.get_signal(bars.sma_fast, bars.sma_slow)
+                    print(f"Position: {position} / Should Buy: {should_buy}")
+
+                    # Make trade decisions
+                    if position == 0 and should_buy:
+                        super().make_order(SYMBOL, QTY_PER_TRADE, "BUY")
+                        socketio.emit('update', {
+                            "type": "BUY",
+                            "message": f"BUY: {QTY_PER_TRADE} {SYMBOL}"
+                        })
+                    elif position > 0 and not should_buy:
+                        super().make_order(SYMBOL, QTY_PER_TRADE, "SELL")
+                        socketio.emit('update', {
+                            "type": "SELL",
+                            "message": f"SELL: {QTY_PER_TRADE} {SYMBOL}"
+                        })
+
+                    # Pause until the next minute
+                    time.sleep(5)
+            except Exception as e:
+                print(f"An error occurred during strategy execution: {e}")

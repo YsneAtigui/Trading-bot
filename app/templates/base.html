@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" x-data="app">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trading Bot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="//unpkg.com/alpinejs" defer></script>
+    <script
+      src="https://cdn.socket.io/4.8.1/socket.io.min.js"
+      integrity="sha384-mkQ3/7FUtcGyoppY6bz/PORYoGqOl7/aSUMn2ymDOJcapfS6PHqxhRTMh1RR0Q6+"
+      crossorigin="anonymous"
+    ></script>
+    <script src="../static/alpine.js"></script>
+  </head>
+  <body class="bg-gray-100" x-data="app" x-init="init()">
+    <div class="container min-h-screen mx-auto p-4">
+      <div class="h-full grid grid-cols-[18rem,1fr] gap-4">
+        <div class="">
+          <div class="flex items-center justify-between mb-6">
+            <h1 class="text-3xl font-bold">ADIA Bot</h1>
+            <button
+              @click="showModal = true"
+              class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+            >
+              Keys
+            </button>
+          </div>
+          <!--<div class="flex justify-center mb-8">
+            <button
+              @click="switchStrategyType('sma')"
+              :class="{ 'bg-blue-500 text-white': strategy === 'sma', 'bg-gray-200': strategy !== 'sma' }"
+              class="px-6 py-2 rounded-l-lg transition-colors"
+            >
+              SMA Strategy
+            </button>
+            <button
+              @click="switchStrategyType('rsi')"
+              :class="{ 'bg-blue-500 text-white': strategy === 'rsi', 'bg-gray-200': strategy !== 'rsi' }"
+              class="px-6 py-2 rounded-r-lg transition-colors"
+            >
+              RSI Strategy
+            </button>
+          </div>
+            -->
+
+          <!-- Flash Messages -->
+          {% with messages = get_flashed_messages(with_categories=true) %} {% if
+          messages %} {% for category, message in messages %}
+          <div
+            class="mb-4 p-4 rounded-lg {{ 'bg-green-100 text-green-700' if category == 'success' else 'bg-red-100 text-red-700' }}"
+          >
+            {{ message }}
+          </div>
+          {% endfor %} {% endif %} {% endwith %} {% include 'forms.html' %}
+
+          <!-- Error Message -->
+          <div
+            x-show="error"
+            class="bg-red-100 text-red-700 p-4 rounded-lg my-4"
+          >
+            <p x-text="error"></p>
+          </div>
+        </div>
+        <div class="border-l p-4 h-full">
+          <div x-if="responseData">
+            <div x-show="responseData">
+                <div class="bg-white p-6 rounded-lg shadow-md mb-4">
+                  <h2 class="text-xl font-bold">
+                    SMA Strategy Started with following estimators:
+                  </h2>
+                  <div>
+                    <ul>
+                      <li>
+                        <span>Symbol</span>:
+                        <span x-text="responseData.data.symbol"></span>
+                      </li>
+                      <li>
+                        <span>Quantity</span>:
+                        <span x-text="responseData.data.qty"></span>
+                      </li>
+                      <li>
+                        <span>Fast Period</span>:
+                        <span x-text="responseData.data.sma_fast"></span>
+                      </li>
+                      <li>
+                        <span>Slow Period</span>:
+                        <span x-text="responseData.data.sma_slow"></span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+    
+                <div class="space-y-4">
+                  <h2 class="text-center font-bold text-xl">Operations</h2>
+                  <template x-for="(operation, index) in operations" :key="index">
+                    <div
+                      class="p-4 rounded-lg shadow-md"
+                      :class="{
+                                    'bg-green-100 border-l-4 border-green-500': operation.type === 'BUY',
+                                    'bg-red-100 border-l-4 border-red-500': operation.type === 'SELL'
+                                }"
+                    >
+                      <div class="flex items-center justify-between">
+                        <span
+                          x-text="operation.message"
+                          class="text-gray-800"
+                        ></span>
+                        <span
+                          x-text="operation.type"
+                          class="px-3 py-1 rounded-full text-sm font-semibold"
+                          :class="{
+                                            'bg-green-500 text-white': operation.type === 'BUY',
+                                            'bg-red-500 text-white': operation.type === 'SELL'
+                                        }"
+                        ></span>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% include "keys.html" %}
+  </body>
+</html>

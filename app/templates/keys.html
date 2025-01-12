@@ -1,0 +1,49 @@
+<!-- Modal for API Keys -->
+<div
+    x-show="showModal"
+    class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+    x-cloak
+>
+    <div class="bg-white p-6 rounded-lg shadow-md w-96">
+        <h2 class="text-xl font-bold mb-4">Set API Keys</h2>
+        <form @submit.prevent="saveApiKeys">
+            <div class="mb-4">
+                <label for="modal_api_key" class="block text-sm font-medium text-gray-700">API Key</label>
+                <input
+                    type="text"
+                    id="modal_api_key"
+                    name="modal_api_key"
+                    x-model="formData.api_key"
+                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                    required
+                >
+            </div>
+            <div class="mb-4">
+                <label for="modal_secret_key" class="block text-sm font-medium text-gray-700">Secret Key</label>
+                <input
+                    type="text"
+                    id="modal_secret_key"
+                    name="modal_secret_key"
+                    x-model="formData.secret_key"
+                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+                    required
+                >
+            </div>
+            <div class="flex justify-end space-x-4">
+                <button
+                    type="button"
+                    @click="showModal = false"
+                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors"
+                >
+                    Cancel
+                </button>
+                <button
+                    type="submit"
+                    class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+                >
+                    Save
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

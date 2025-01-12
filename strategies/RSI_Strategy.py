@@ -151,9 +151,9 @@ class RSI_Strategy(Strategies):
     def execute_trade_logic(self,symbol, current_rsi, current_macd, current_signal, position_qty, qty,
                         rsi_oversold, rsi_overbought, macd_buy_signal, macd_sell_signal):
         # Debugging: Print the current RSI and MACD values
-        print(f"Current RSI for {symbol}: {current_rsi}")
-        print(f"Current MACD for {symbol}: {current_macd}")
-        print(f"Current Signal for {symbol}: {current_signal}")
+        # print(f"Current RSI for {symbol}: {current_rsi}")
+        # print(f"Current MACD for {symbol}: {current_macd}")
+        # print(f"Current Signal for {symbol}: {current_signal}")
 
     # Trading logic based on RSI and MACD
         if current_rsi < rsi_oversold and current_macd > current_signal and macd_buy_signal and position_qty == 0:
@@ -184,7 +184,7 @@ class RSI_Strategy(Strategies):
             qty (int): Quantity to trade.
         """
         # Fetch historical data for the stock symbol
-        start_date, end_date = self.get_date_range(lookback_days=730)  # Adjust the lookback period as needed
+        start_date, end_date = self.get_date_range(lookback_days=90)
         data = self.get_stock_data(symbol,"Day",start_date, end_date)
 
 
@@ -219,6 +219,52 @@ class RSI_Strategy(Strategies):
 
             # Plot closing price, RSI, and MACD
             self.plot_data(data, symbol)
+
+            # Execute trading logic based on RSI and MACD values
+            self.execute_trade_logic(symbol, current_rsi, current_macd, current_signal, position_qty, qty,
+                            self.RSI_OVERSOLD, self.RSI_OVERBOUGHT, self.MACD_BUY_SIGNAL, self.MACD_SELL_SIGNAL)
+        else:
+            print(f"No data available for {symbol}")
+
+    def api_trade(self,symbol,qty, socketio):
+        """
+        Executes trades based on RSI and MACD strategy.
+
+        Args:
+            symbol (str): Stock/asset symbol.
+            qty (int): Quantity to trade.
+        """
+        # Fetch historical data for the stock symbol
+        start_date, end_date = self.get_date_range(lookback_days=90)
+        data = self.get_stock_data(symbol,"Day",start_date, end_date)
+
+
+    # Check if data is empty
+        if data.empty:
+            print(f"No data available for {symbol}")
+            return
+
+    # Calculate RSI and add it as a new column
+        data['RSI'] = self.rsi(data['close'], 14)
+
+    # Calculate MACD and Signal line
+        data['MACD'], data['Signal'] = self.macd(data)
+
+        if len(data) > 0:
+            current_rsi = data['RSI'].iloc[-1]
+            current_macd = data['MACD'].iloc[-1]
+            current_signal = data['Signal'].iloc[-1]
+            # print(f"Current RSI for {symbol}: {current_rsi}")
+            # print(f"Current MACD for {symbol}: {current_macd}")
+            # print(f"Current Signal for {symbol}: {current_signal}")
+
+            # Get current position in the symbol
+            position_qty = self.get_position(symbol)
+            # print(f"Current position in {symbol}: {position_qty} shares")
+
+            # Calculate the position size based on risk tolerance
+            position_size = self.calculate_position_size(symbol, self.RISK_PERCENTAGE,self.STOP_LOSS_PERCENTAGE)
+            # print(f"Calculated position size: {position_size} shares")
 
             # Execute trading logic based on RSI and MACD values
             self.execute_trade_logic(symbol, current_rsi, current_macd, current_signal, position_qty, qty,
